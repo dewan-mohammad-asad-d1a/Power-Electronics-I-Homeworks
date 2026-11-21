@@ -1,0 +1,912 @@
+Plecs {
+  Name          "Problem_01_BuckBoost_freq_domain"
+  Version       "5.0"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  TimeSpan      "1"
+  Timeout       ""
+  Solver        "dopri"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  NonIdealSwitchResistance "1"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "2"
+  DatatypeOverflowMsg "2"
+  DatatypeInheritanceConflictMsg "1"
+  ContSampleTimeConflictMsg "1"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "2"
+  AssertionAction "1"
+  FixedPointDatatypeOverride "1"
+  InitializationCommands "\n% ---------- Parameters (your original notation) -"
+"---------\nf      = 900e3;       % Switching frequency (Hz)\nLo     = 200e-6;"
+"      % Inductance (H)\nCo     = 200e-6;      % Output capacitance (F)\nesr  "
+"  = 0.008;       % Capacitor ESR (ohm)\nR_load = 10;          % Load resistan"
+"ce (ohm)\n\nVin  = 20;            % Input voltage (V)\nVout = 30;            "
+"% Desired output magnitude (V)\nD    = Vout/(Vin + Vout);   % from Vout = D*("
+"Vin + Vout)  -> 0.6\n\n% ---------- Helper ----------\nDp = 1 - D;           "
+"% complementary duty ratio (1-D) -> 0.4\n\n% ---------- Operating point (C op"
+"en, L short at DC) ----------\nVvp = Vin + Vout;           % constant-voltage"
+" port, = Vout/D     -> 50 V\nVC  = Vout;                 % no DC current in E"
+"SR, so VC = Vout  -> 30 V\nIL  = Vout/(Dp*R_load);     % (1-D)*Icp = Vout/R_l"
+"oad            -> 7.5 A\nIcp = IL;                   % current port carries i"
+"nductor current\nIvp = D*Icp;                % = input current               "
+"      -> 4.5 A\n\n% ---------- Common denominator ----------\n%  (1-D)^2*R + "
+"s*(L + (1-D)^2*R*C*esr) + s^2*L*C*(R + esr)\na2  = Lo*Co*(R_load + esr);\na1 "
+" = Lo + Dp^2*R_load*Co*esr;\na0  = Dp^2*R_load;\nden = [a2 a1 a0];\n\n% -----"
+"----- G_id = i_L / d ----------\n%  = (Vout/D) * [ (1+D) + s*C*(R + (1+D)*esr"
+") ] / den\nnum_id = Vvp * [Co*(R_load + (1+D)*esr), (1+D)];\n\n% ---------- G"
+"_vd = v_o / d ----------\n%  = R*(1 + s*C*esr)*(Vin - s*L*Icp) / den      (RH"
+"P zero at Vin/(L*Icp))\nnum_vd = R_load * [-Co*esr*Lo*Icp, Co*esr*Vin - Lo*Ic"
+"p, Vin];"
+  InitialState  "1"
+  SystemState   ""
+  JacobianComputation "2"
+  TaskingMode   "1"
+  TaskConfigurations ""
+  CodeGenParameterInlining "2"
+  CodeGenFloatingPointFormat "2"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "Generic"
+  CodeGenTargetSettings ""
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  RemoveUnusedStateSpaceOutputs "1"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings ""
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  ScriptsDialogGeometry ""
+  ScriptsDialogSplitterPos "0"
+  MixedSignalSolverBypassOperatingPoint "1"
+  MixedSignalSolverInitialConditions "2"
+  MixedSignalSolverMaxNewtonIterations "25"
+  MixedSignalSolverNumThreads "-1"
+  OperatingPointMaxNewtonIterations "50"
+  OperatingPointRelativeNewtonTolerance "1e-3"
+  OperatingPointAbsoluteNewtonTolerance "1e-12"
+  OperatingPointNodalVoltageNewtonTolerance "1e-6"
+  SpiceTemperature "27"
+  SpiceGMin     "0"
+  SpiceInductorRPar "0"
+  SpiceInductorRSer "0"
+  SpiceCapacitorGPar "0"
+  SpiceCapacitorRSer "0"
+  NetlistParserDetails "2"
+  InvalidNetlistFunctionEvaluationMsg "1"
+  IncompatibleInitialConditionMsg "2"
+  Schematic {
+    Location      [2536, 203; 4056, 1049]
+    ZoomFactor    1.49863
+    SliderPosition [0, 5]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          DCVoltageSource
+      Name          "V_dc1"
+      Show          off
+      Position      [175, 330]
+      Direction     down
+      Flipped       on
+      LabelPosition east
+      Parameter {
+        Variable      "V"
+        Value         "Vin"
+        Show          on
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D2"
+      Show          on
+      Position      [325, 285]
+      Direction     right
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Vf"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Np"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Mosfet
+      Name          "T1"
+      Show          off
+      Position      [240, 285]
+      Direction     right
+      Flipped       on
+      LabelPosition south
+      Parameter {
+        Variable      "Ron"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Np"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "L2"
+      Show          off
+      Position      [280, 345]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "L"
+        Value         "Lo"
+        Show          on
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "R2"
+      Show          off
+      Position      [515, 330]
+      Direction     down
+      Flipped       off
+      LabelPosition west
+      Parameter {
+        Variable      "R"
+        Value         "R_load"
+        Show          on
+      }
+    }
+    Component {
+      Type          Capacitor
+      Name          "C2"
+      Show          off
+      Position      [420, 330]
+      Direction     down
+      Flipped       on
+      LabelPosition west
+      Parameter {
+        Variable      "C"
+        Value         "Co"
+        Show          on
+      }
+      Parameter {
+        Variable      "v_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Ammeter
+      Name          "Am2"
+      Show          off
+      Position      [280, 305]
+      Direction     up
+      Flipped       off
+      LabelPosition west
+    }
+    Component {
+      Type          Voltmeter
+      Name          "Vm1"
+      Show          off
+      Position      [585, 360]
+      Direction     up
+      Flipped       off
+      LabelPosition west
+    }
+    Component {
+      Type          SignalMux
+      Name          "CMux"
+      Show          off
+      Position      [620, 220]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-2, -10; 7, 10]
+      Parameter {
+        Variable      "Width"
+        Value         "2"
+        Show          off
+      }
+    }
+    Component {
+      Type          Scope
+      Name          "Scope"
+      Show          on
+      Position      [680, 200]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Frame         [-15, -15; 15, 15]
+      Location      [513, 58; 952, 603]
+      State         "AAAA/wAAAAD9AAAAAgAAAAEAAAAAAAAAAPwCAAAAA/sAAAAQAFoAbwBvA"
+"G0AQQByAGUAYQAAAAAA/////wAAAFgA////+wAAABQAUwBhAHYAZQBkAFYAaQBlAHcAcwAAAAAA//"
+"///wAAAGIA////+wAAAAwAVAByAGEAYwBlAHMAAAAAAP////8AAABiAP///wAAAAMAAAG3AAAAXfw"
+"BAAAAAfsAAAAUAEQAYQB0AGEAVwBpAGQAZwBlAHQAAAAAAAAAAbcAAABEAP///wAAAbcAAAICAAAA"
+"BAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAOAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAA"
+"AAAAA=="
+      SavedViews    "AAAAAgAAAAA="
+      HeaderState   "{\"DefaultSecSize\":0,\"FirstSecSize\":237,\"Labels\":[],"
+"\"VisualIdxs\":[]}"
+      PlotPalettes  "AAAAAQAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA"
+"AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      Axes          "2"
+      TimeRange     "0"
+      ScrollingMode "1"
+      SingleTimeAxis "1"
+      Open          "0"
+      Ts            "-1"
+      SampleLimit   "0"
+      XAxisLabel    "Time / s"
+      ShowLegend    "1"
+      Axis {
+        Name          "Buck-Boost Converter"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {"Inductor current", "Load voltage"}
+        SignalTypes   [ ]
+        AxisLabel     "Current / A (green) and Voltage / V (red)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Non-Inverting Buck-Boost Converter"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {"Inductor current"}
+        SignalTypes   [ ]
+        AxisLabel     "Current (green) and Voltage (red)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Fourier {
+        SingleXAxis       on
+        AxisLabel         "Frequency"
+        Scaling           0
+        PhaseDisplay      0
+        ShowFourierLegend off
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+      }
+    }
+    Component {
+      Type          Constant
+      Name          "Constant1"
+      Show          on
+      Position      [600, 480]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-30, -10; 30, 10]
+      Parameter {
+        Variable      "Value"
+        Value         "D"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "10"
+        Show          off
+      }
+    }
+    Component {
+      Type          TriangleGenerator
+      Name          "Triangular Wave2"
+      Show          on
+      Position      [785, 525]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Min"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Max"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f"
+        Value         "f"
+        Show          on
+      }
+      Parameter {
+        Variable      "DutyCycle"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Delay"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          RelationalOperator
+      Name          "Relational\nOperator2"
+      Show          on
+      Position      [865, 485]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Operator"
+        Value         "5"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Goto8"
+      Show          off
+      Position      [915, 485]
+      Direction     left
+      Flipped       on
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "G2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+      Parameter {
+        Variable      "CustomMessage"
+        Value         ""
+        Show          off
+        Evaluate      on
+      }
+      Parameter {
+        Variable      "HighlightLevel"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          SmallSignalPerturbation
+      Name          "d~1"
+      Show          on
+      Position      [695, 480]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "ShowInput"
+        Value         "2"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "From1"
+      Show          off
+      Position      [195, 250]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "G2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "CustomMessage"
+        Value         ""
+        Show          off
+        Evaluate      on
+      }
+      Parameter {
+        Variable      "HighlightLevel"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          SmallSignalResponse
+      Name          "vo~1"
+      Show          on
+      Position      [695, 360]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "ShowReference"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "InvertReference"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Goto1"
+      Show          off
+      Position      [695, 330]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vo1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+      Parameter {
+        Variable      "CustomMessage"
+        Value         ""
+        Show          off
+        Evaluate      on
+      }
+      Parameter {
+        Variable      "HighlightLevel"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "R4"
+      Show          on
+      Position      [420, 400]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "R"
+        Value         "esr"
+        Show          on
+      }
+    }
+    Component {
+      Type          TransferFunction
+      Name          "Plant transfer fcn: vo/d1"
+      Show          on
+      Position      [695, 625]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-30, -15; 30, 15]
+      Parameter {
+        Variable      "Numerator"
+        Value         "num_id"
+        Show          off
+      }
+      Parameter {
+        Variable      "Denominator"
+        Value         "den"
+        Show          off
+      }
+      Parameter {
+        Variable      "X0"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          SmallSignalPerturbation
+      Name          "Perturb 2"
+      Show          on
+      Position      [585, 625]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "ShowInput"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          SmallSignalResponse
+      Name          "Response 3"
+      Show          on
+      Position      [805, 625]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "ShowReference"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "InvertReference"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          SmallSignalResponse
+      Name          "io~1"
+      Show          on
+      Position      [555, 170]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "ShowReference"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "InvertReference"
+        Value         "1"
+        Show          off
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "L2"
+      SrcTerminal   2
+      Points        [280, 465]
+      Branch {
+        Points        [420, 465]
+        Branch {
+          Points        [515, 465]
+          Branch {
+            DstComponent  "R2"
+            DstTerminal   1
+          }
+          Branch {
+            Points        [545, 465; 545, 340]
+            DstComponent  "Vm1"
+            DstTerminal   1
+          }
+        }
+        Branch {
+          DstComponent  "R4"
+          DstTerminal   2
+        }
+      }
+      Branch {
+        Points        [175, 465]
+        DstComponent  "V_dc1"
+        DstTerminal   2
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "C2"
+      SrcTerminal   1
+      Points        [420, 285]
+      Branch {
+        Points        [515, 285]
+        Branch {
+          DstComponent  "R2"
+          DstTerminal   2
+        }
+        Branch {
+          Points        [550, 285; 550, 380]
+          DstComponent  "Vm1"
+          DstTerminal   2
+        }
+      }
+      Branch {
+        DstComponent  "D2"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Am2"
+      SrcTerminal   2
+      DstComponent  "L2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Am2"
+      SrcTerminal   1
+      Points        [280, 285]
+      Branch {
+        DstComponent  "T1"
+        DstTerminal   2
+      }
+      Branch {
+        DstComponent  "D2"
+        DstTerminal   2
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "T1"
+      SrcTerminal   1
+      Points        [175, 285]
+      DstComponent  "V_dc1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "CMux"
+      SrcTerminal   1
+      Points        [645, 220; 645, 195]
+      DstComponent  "Scope"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Triangular Wave2"
+      SrcTerminal   1
+      Points        [815, 525; 815, 490]
+      DstComponent  "Relational\nOperator2"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Relational\nOperator2"
+      SrcTerminal   3
+      DstComponent  "Goto8"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "d~1"
+      SrcTerminal   1
+      DstComponent  "Relational\nOperator2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Constant1"
+      SrcTerminal   1
+      DstComponent  "d~1"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "From1"
+      SrcTerminal   1
+      DstComponent  "T1"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Vm1"
+      SrcTerminal   3
+      Points        [630, 360]
+      Branch {
+        Points        [630, 295; 605, 295]
+        DstComponent  "CMux"
+        DstTerminal   3
+      }
+      Branch {
+        Points        [665, 360]
+        Branch {
+          Points        [665, 330]
+          DstComponent  "Goto1"
+          DstTerminal   1
+        }
+        Branch {
+          DstComponent  "vo~1"
+          DstTerminal   1
+        }
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "R4"
+      SrcTerminal   1
+      DstComponent  "C2"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Perturb 2"
+      SrcTerminal   1
+      DstComponent  "Plant transfer fcn: vo/d1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Plant transfer fcn: vo/d1"
+      SrcTerminal   2
+      DstComponent  "Response 3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Am2"
+      SrcTerminal   3
+      Points        [465, 305; 465, 215; 515, 215]
+      Branch {
+        DstComponent  "CMux"
+        DstTerminal   2
+      }
+      Branch {
+        Points        [515, 170]
+        DstComponent  "io~1"
+        DstTerminal   1
+      }
+    }
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">***********************"
+"***************************************************</p>\n<p align=\"center\">"
+"Verification of various analytically derived small signal transfer functions "
+"of Buck-Boost converter</p>\n<p align=\"center\">****************************"
+"********************************************** </p></body></html>"
+      Position      [405, 40]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">For frequency domain an"
+"alysis - &quot;Simulation/Analysis tools  </p>\n<p align=\"center\">         "
+"                                                                             "
+"     - select 'Impulse response analysis' and Run analysis</p></body></html>"
+      Position      [320, 95]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p>Buck-Boost Converter</p></body></html>"
+      Position      [382.123, 225]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">** For open loop operat"
+"ion **</p></body></html>"
+      Position      [655, 525]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">Plant transfer function"
+", d to vo</p></body></html>"
+      Position      [685, 595]
+    } 
+  }
+  Analysis {
+    Type          ImpulseResponseAnalysis
+    Name          "Impulse Response Analysis"
+    ShowLegend    "2"
+    TimeSpan      "10/f"
+    StartTime     "0"
+    Tolerance     "1e-4"
+    MaxIter       "200"
+    FrequencyRange "[10 40000]"
+    FrequencyScale "2"
+    Amplitude     "1e-3"
+    NumPoints     "300"
+    Perturbation  "Perturb 2"
+    Response      "Response 3"
+    JacobianPerturbation "1e-4"
+    JacobianCalculation "2"
+    InitCycles    "0"
+    MaxNumberOfThreads "-1"
+  }
+  Analysis {
+    Type          SteadyStateAnalysis
+    Name          "Steady-State Analysis"
+    OperatingPoint "1"
+    TimeSpan      "1/f"
+    StartTime     "0"
+    Tolerance     "1e-4"
+    MaxIter       "20"
+    JacobianPerturbation "1e-4"
+    JacobianCalculation "2"
+    InitCycles    "0"
+    ShowCycles    "10"
+    MaxNumberOfThreads "-1"
+  }
+}
